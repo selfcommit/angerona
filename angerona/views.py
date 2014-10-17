@@ -3,7 +3,6 @@ from pyramid.view import view_config
 
 from sqlalchemy.exc import DBAPIError
 
-import colander
 from deform import Form
 from deform import ValidationFailure
 
@@ -11,6 +10,10 @@ from .models import (
     DBSession,
     Secret,
     )
+
+import colander
+
+from .crypto import SecretEncrypter
 
 class SavePasswordForm(colander.MappingSchema):
     data = colander.SchemaNode(colander.String())
@@ -32,14 +35,27 @@ class SavePasswordForm(colander.MappingSchema):
 
 @view_config(route_name='home', renderer='templates/home.pt')
 def view_home(request):
-    #try:
-    #    one = DBSession.query(Secret).first()
-    #except DBAPIError:
-    #    return Response(conn_err_msg, content_type='text/plain', status_int=500)
-    #return {'one': one, 'project': 'angerona'}
     schema = SavePasswordForm()
-    pwform = Form(schema, buttons=('submit',))
+    pwform = Form(schema, action='/save', buttons=('submit',))
     return {'pwform': pwform.render()}
 
-conn_err_msg = "conn_err"
+@view_config(route_name='save', renderer='templates/save.pt')
+def view_save(request):
+    if not request.method == 'POST':
+        return Response('Method not allowed', content_type='text/plain', status_int=405)
+    #
+    se = SecretEncrypter()
+    uid = se.encrypt(request.POST['data'])
+    model = se.ret_secret_model()
 
+    toHex = lambda x:"".join([hex(ord(c))[2:].zfill(2) for c in x])
+    
+    return {'uniqid':uid, 'data':toHex(model.CipherText)}
+    
+@view_config(route_name='retr', renderer='templates/retr.pt')
+def view_save(request):
+    if request.method == 'POST':
+        return Response('Method not allowed', content_type='text/plain', status_int=405)
+    
+    return Response('retrieve!', content_type='text/plain', status_int=200)
+    
