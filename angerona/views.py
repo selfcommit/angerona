@@ -3,34 +3,43 @@ from pyramid.view import view_config
 
 from sqlalchemy.exc import DBAPIError
 
+import colander
+from deform import Form
+from deform import ValidationFailure
+
 from .models import (
     DBSession,
     Secret,
     )
 
+class SavePasswordForm(colander.MappingSchema):
+    data = colander.SchemaNode(colander.String())
+    maximum_views = colander.SchemaNode(
+        colander.Integer(),
+        validator=colander.Range(1, 5),
+        default=2
+    )
+    hours_until_expiration = colander.SchemaNode(
+        colander.Integer(),
+        validator=colander.Range(1, 120),
+        default=4
+    )
+    snippet_type = colander.SchemaNode(
+        colander.String(),
+        validator=colander.OneOf(['Password','Plaintext']),
+        default='Password'
+    )
 
-@view_config(route_name='home', renderer='templates/mytemplate.pt')
-def my_view(request):
-    try:
-        one = DBSession.query(Secret).first()
-    except DBAPIError:
-        return Response(conn_err_msg, content_type='text/plain', status_int=500)
-    return {'one': one, 'project': 'angerona'}
+@view_config(route_name='home', renderer='templates/home.pt')
+def view_home(request):
+    #try:
+    #    one = DBSession.query(Secret).first()
+    #except DBAPIError:
+    #    return Response(conn_err_msg, content_type='text/plain', status_int=500)
+    #return {'one': one, 'project': 'angerona'}
+    schema = SavePasswordForm()
+    pwform = Form(schema, buttons=('submit',))
+    return {'pwform': pwform.render()}
 
-
-conn_err_msg = """\
-Pyramid is having a problem using your SQL database.  The problem
-might be caused by one of the following things:
-
-1.  You may need to run the "initialize_angerona_db" script
-    to initialize your database tables.  Check your virtual
-    environment's "bin" directory for this script and try to run it.
-
-2.  Your database server may not be running.  Check that the
-    database server referred to by the "sqlalchemy.url" setting in
-    your "development.ini" file is running.
-
-After you fix the problem, please restart the Pyramid application to
-try it again.
-"""
+conn_err_msg = "conn_err"
 

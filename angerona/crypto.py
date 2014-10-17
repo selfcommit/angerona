@@ -22,7 +22,7 @@ class SecretEncrypter:
 
         #generate the hash of our UniqID (host-safing the data)
         hasher = SHA256.new()
-        hasher.update('{}{}'.format(uniqid, self.uniqid))
+        hasher.update('{}{}'.format(uniqid, uniqid))
         self.UniqHash = hasher.digest()
 
         #generate the input for our key derivation formula
@@ -44,9 +44,9 @@ class SecretEncrypter:
         aesiv = hasher.digest()[0:15]
 
         #pad from http://stackoverflow.com/a/12525165/274549
+        ## s[:-ord(s[len(s)-1:])]
         BS = 16
         pad = lambda s: s + (BS - len(s) % BS) * chr(BS - len(s) % BS)
-        #unpad: unpad = lambda s : s[0:-ord(s[-1])]
 
         #encrypt it w/ padding
         cipher = AES.new(aeskey, AES.MODE_CBC, aesiv)
@@ -55,7 +55,7 @@ class SecretEncrypter:
         # this is the only place the original uniqid is returned
         return uniqid
 
-    def ret_secret(self):
+    def ret_secret_model(self):
         model = Secret()
         model.UniqHash = self.UniqHash
         model.Nonce = self.Nonce
@@ -71,3 +71,33 @@ class SecretDecrypter:
     def __init__(self):
         pass
 
+    def decrypt_model(self, in_model, uniqid):
+        if not isinstance(in_model, Secret):
+            raise RuntimeException('in_model is not an instance of Secret')
+        
+        #generate the input for our key derivation formula
+        hasher = SHA256.new()
+        hasher.update('{}{}'.format(uniqid, in_model.Nonce))
+        keyhash = hasher.digest()
+
+        #derive our AES key (aes256 wants 32bytes)
+        aeskey = PBKDF2(
+            password=keyhash,
+            salt=in_model.Salt,
+            dkLen=32,
+            count=100000,
+            )
+
+        #derive our Iv from the UniqID (16 bytes)
+        hasher = SHA256.new()
+        hasher.update('{}{}'.format(uniqid, aeskey))
+        aesiv = hasher.digest()[0:15]
+
+        #unpad from http://stackoverflow.com/a/12525165/274549
+        ## s[:-ord(s[len(s)-1:])]
+        BS = 16
+        unpad = lambda s : s[0:-ord(s[-1])]
+
+        #encrypt it w/ padding
+        cipher = AES.new(aeskey, AES.MODE_CBC, aesiv)
+        return unpad(cipher.encrypt(plaintext))
