@@ -13,12 +13,12 @@ class TestMyViewSuccessCondition(unittest.TestCase):
         engine = create_engine('sqlite://')
         from .models import (
             Base,
-            MyModel,
+#            MyModel,
             )
         DBSession.configure(bind=engine)
         Base.metadata.create_all(engine)
         with transaction.manager:
-            model = MyModel(name='one', value=55)
+ #           model = MyModel(name='one', value=55)
             DBSession.add(model)
 
     def tearDown(self):

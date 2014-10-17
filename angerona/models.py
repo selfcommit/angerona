@@ -1,8 +1,9 @@
 from sqlalchemy import (
     Column,
-    Index,
-    Integer,
-    Text,
+    LargeBinary,
+    SmallInteger,
+    String,
+    DateTime
     )
 
 from sqlalchemy.ext.declarative import declarative_base
@@ -17,11 +18,14 @@ from zope.sqlalchemy import ZopeTransactionExtension
 DBSession = scoped_session(sessionmaker(extension=ZopeTransactionExtension()))
 Base = declarative_base()
 
+class Secret(Base):
+    __tablename__ = 'secret'
+    UniqHash = Column(String(64), primary_key=True)
+    Nonce = Column(LargeBinary(32))
+    Salt = Column(LargeBinary(32))
+    Snippet = Column(String(8))
+    ExpiryTime = Column(DateTime)
+    LifetimeReads = Column(SmallInteger)
+    CipherText = Column(LargeBinary(7680))
 
-class MyModel(Base):
-    __tablename__ = 'models'
-    id = Column(Integer, primary_key=True)
-    name = Column(Text)
-    value = Column(Integer)
-
-Index('my_index', MyModel.name, unique=True, mysql_length=255)
+#Index('my_index', MyModel.name, unique=True, mysql_length=255)
