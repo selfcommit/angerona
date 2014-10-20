@@ -48,14 +48,24 @@ def view_save(request):
     uid = se.encrypt(request.POST['data'])
     model = se.ret_secret_model()
 
+    DBSession.add(model)
+
     toHex = lambda x:"".join([hex(ord(c))[2:].zfill(2) for c in x])
     
     return {'uniqid':uid, 'data':toHex(model.CipherText)}
     
 @view_config(route_name='retr', renderer='templates/retr.pt')
-def view_save(request):
+def view_retr(request):
     if request.method == 'POST':
         return Response('Method not allowed', content_type='text/plain', status_int=405)
+
+    if len(request.matchdict['uniqid']) != 32:
+        return Response('Bad request', content_type='text/plain', status_int=400)
     
-    return Response('retrieve!', content_type='text/plain', status_int=200)
+    session = DBSession()
+    themod = session.query(Secret).filter_by(name=request.matchdict['uniqid']).one()
+    sd = SecretDecrypter()
+    data2 = sd.decrypt_model(themod)
+
+    return Response(data2, content_type='text/plain', status_int=200)
     

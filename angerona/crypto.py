@@ -61,8 +61,7 @@ class SecretEncrypter:
         return uniqid
 
     def ret_secret_model(self):
-        model = Secret()
-        model.UniqHash = self.UniqHash
+        model = Secret(self.UniqHash)
         model.Nonce = self.Nonce
         model.Salt = self.Salt
         model.Snippet = None
@@ -76,10 +75,12 @@ class SecretDecrypter:
     def __init__(self):
         pass
 
-    def decrypt_model(self, in_model, uniqid):
+    def decrypt_model(self, in_model):
         if not isinstance(in_model, Secret):
             raise RuntimeException('in_model is not an instance of Secret')
-        
+       
+        uniqid = in_model.UniqHash
+ 
         #generate the input for our key derivation formula
         hasher = SHA256.new()
         hasher.update('{}{}'.format(uniqid, in_model.Nonce))

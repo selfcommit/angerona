@@ -28,4 +28,7 @@ class Secret(Base):
     LifetimeReads = Column(SmallInteger)
     CipherText = Column(LargeBinary(7680))
 
+    def __init__(self, uniqid):
+        self.UniqHash = uniqid
+
 #Index('my_index', MyModel.name, unique=True, mysql_length=255)
