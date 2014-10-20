@@ -26,7 +26,7 @@ class Secret(Base):
     Snippet = Column(String(8))
     ExpiryTime = Column(DateTime)
     LifetimeReads = Column(SmallInteger)
-    CipherText = Column(LargeBinary(7680))
+    CipherText = Column(LargeBinary)
 
     def __init__(self, uniqid):
         self.UniqHash = uniqid

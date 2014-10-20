@@ -31,7 +31,6 @@
           <div class="col-md-10">
             <div class="content">
               <div tal:content="structure uniqid"></div>
-              <pre>${data}</pre>
             </div>
           </div>
         </div>

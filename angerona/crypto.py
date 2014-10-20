@@ -23,7 +23,7 @@ class SecretEncrypter:
         #generate the hash of our UniqID (host-safing the data)
         hasher = SHA256.new()
         hasher.update('{}{}'.format(uniqid, uniqid))
-        self.UniqHash = hasher.digest()
+        self.UniqHash = hasher.hexdigest()
 
         #generate the input for our key derivation formula
         hasher = SHA256.new()
@@ -75,12 +75,10 @@ class SecretDecrypter:
     def __init__(self):
         pass
 
-    def decrypt_model(self, in_model):
+    def decrypt_model(self, in_model, uniqid):
         if not isinstance(in_model, Secret):
             raise RuntimeException('in_model is not an instance of Secret')
        
-        uniqid = in_model.UniqHash
- 
         #generate the input for our key derivation formula
         hasher = SHA256.new()
         hasher.update('{}{}'.format(uniqid, in_model.Nonce))
@@ -106,4 +104,4 @@ class SecretDecrypter:
 
         #encrypt it w/ padding
         cipher = AES.new(aeskey, AES.MODE_CBC, aesiv)
-        return unpad(cipher.encrypt(plaintext))
+        return unpad(cipher.decrypt(in_model.CipherText))
