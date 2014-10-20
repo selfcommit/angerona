@@ -19,5 +19,6 @@ def main(global_config, **settings):
     config.add_route('home', '/')
     config.add_route('save', '/save')
     config.add_route('retr', '/retr/{uniqid}')
+    config.add_route('expired', '/expired')
     config.scan()
     return config.make_wsgi_app()

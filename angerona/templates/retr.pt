@@ -16,7 +16,9 @@
     <!-- Custom styles for this scaffold -->
     <link href="${request.static_url('angerona:static/theme.css')}" rel="stylesheet">
 
-    <link tal:condition="datatype" href="${request.static_url('angerona:static/shighl/styles/shThemeDefault.css" rel="stylesheet" type="text/css" />
+    <tal:block tal:condition="datatype != ''">
+    <link href="${request.static_url('angerona:static/shilgh/styles/shThemeDefault.css')}" rel="stylesheet" type="text/css" />
+    </tal:block>
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -32,7 +34,7 @@
         <div class="row">
           <div class="col-md-10">
             <div class="content">
-              <code tal:condition="datatype != ''" class="brush: ${datatype};" tal:content="data"></code>
+              <pre tal:condition="datatype != ''" class="brush: ${datatype}" tal:content="data"></pre>
               <pre tal:condition="datatype == ''" tal:content="data"></pre>
             </div>
           </div>
@@ -56,10 +58,30 @@
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="${request.static_url('angerona:static/jquery.min.js')}"></script>
-    <script src="${request.static_url('angerona:static/scripts/deform.js')}"></script>
+    <script src="${request.static_url('angerona:static/deform.js')}"></script>
     <script src="${request.static_url('angerona:static/bootstrap.min.js')}"></script>
-    <script tal:condition="datatype" src="${request.static_url('angerona:static/shilgh/scripts/shCore.js')}"></script>
-    <script tal:condition="datatype" src="${request.static_url('angerona:static/shilgh/scripts/shAutoloader.js')}"></script>
+    <tal:block condition="datatype != ''">
+    <script src="${request.static_url('angerona:static/shilgh/scripts/shCore.js')}"></script>
+    <script src="${request.static_url('angerona:static/shilgh/scripts/shAutoloader.js')}"></script>
+    <script type="text/javascript">
+	var sr = "${request.static_url('angerona:static/shilgh/scripts/shBrush')}";
+	SyntaxHighlighter.autoloader(
+		['as3',sr+'AS3.js'],['bash',sr+'Bash.js'],
+		['cf',sr+'ColdFusion.js'],['csharp',sr+'CSharp.js'],
+		['cpp',sr+'Cpp.js'],['css',sr+'Css.js'],
+		['delphi',sr+'Delphi.js'],['diff',sr+'Diff.js'],
+		['erl',sr+'.js'],['groovy',sr+'Groovy.js'],
+		['js',sr+'JScript.js'],['java',sr+'Java.js'],
+		['jfx',sr+'JavaFX.js'],['pl',sr+'Perl.js'],
+		['php',sr+'Php.js'],['plain',sr+'Plain.js'],
+		['ps',sr+'PowerShell.js'],['py',sr+'Python.js'],
+		['ruby',sr+'Ruby.js'],['scala',sr+'Scala.js'],
+		['sql',sr+'Sql.js'],['vb',sr+'Vb.js'],
+		['xml',sr+'Xml.js']
+	);
+        SyntaxHighlighter.all();
+    </script>
+    </tal:block>
     <script type="text/javascript">deform.load()</script>
   </body>
 </html>

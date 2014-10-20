@@ -1,7 +1,9 @@
 from pyramid.response import Response
+from pyramid.httpexceptions import HTTPFound
 from pyramid.view import view_config
 
 from sqlalchemy.exc import DBAPIError
+from sqlalchemy.orm.exc import NoResultFound
 
 import deform
 from deform import Form
@@ -13,6 +15,8 @@ from .models import (
     )
 
 import colander
+import datetime
+from datetime import timedelta
 
 from .crypto import (
     SecretEncrypter,
@@ -32,6 +36,7 @@ class SavePasswordForm(colander.MappingSchema):
         colander.Integer(),
         validator=colander.Range(1, 5),
         default=2,
+        missing=2,
         widget=deform.widget.SelectWidget(values=mvchoices)
     )
     huechoices = (
@@ -46,43 +51,33 @@ class SavePasswordForm(colander.MappingSchema):
         colander.Integer(),
         validator=colander.Range(1, 168),
         default=4,
+        missing=4,
         widget=deform.widget.SelectWidget(values=huechoices)
     )
     dtchoices = (
-        ('', 'Password'),
-        ('as3', 'ActionScript3'),
-        ('shell', 'Bash/Shell'),
-        ('cf', 'ColdFusion'),
-        ('csharp', 'C#'),
-        ('cpp', 'C/C++'),
-        ('css', 'CSS'),
-        ('delphi', 'Delphi, Pascal'),
-        ('diff', 'Diff/Patch'),
-        ('erl', 'Erlang'),
-        ('groovy', 'Groovy'),
-        ('js', 'JavaScript'),
-        ('java', 'Java'),
-        ('jfx', 'JavaFX'),
-        ('pl', 'Perl'),
-        ('php', 'PHP'),
-        ('ps', 'PowerShell'),
-        ('py', 'Python'),
-        ('ruby', 'Ruby'),
-        ('ps', 'PowerShell'),
-        ('scala', 'Scala'),
-        ('sql', 'SQL'),
-        ('vb', 'Visual Basic'),
-        ('xml', 'XML,HTML,XML,XSLT'),
+        ('', 'Password'),('as3', 'ActionScript3'),('shell', 'Bash/Shell'),
+        ('cf', 'ColdFusion'),('csharp', 'C#'),('cpp', 'C/C++'),
+        ('css', 'CSS'),('delphi', 'Delphi, Pascal'),('diff', 'Diff/Patch'),
+        ('erl', 'Erlang'),('groovy', 'Groovy'),('js', 'JavaScript'),
+        ('java', 'Java'),('jfx', 'JavaFX'),('pl', 'Perl'),
+        ('php', 'PHP'),('plain', 'Plain Text'),('ps', 'PowerShell'),
+        ('py', 'Python'),('ruby', 'Ruby'),('scala', 'Scala'),
+        ('sql', 'SQL'),('vb', 'Visual Basic'),('xml', 'XML,HTML,XML,XSLT'),
         )
     snippet_type = colander.SchemaNode(
         colander.String(),
         validator=colander.OneOf([(i[0]) for i in dtchoices]),
         default='',
+        missing='',
         widget=deform.widget.SelectWidget(values=dtchoices,css_class="datatype")
     )
     data = colander.SchemaNode(
         colander.String()
         )
+
+@view_config(route_name='expired', renderer='templates/expired.pt')
+def view_err(request):
+    return Response('not found!', content_type='text/plain', status_int=404)
 
 @view_config(route_name='home', renderer='templates/home.pt')
 def view_home(request):
@@ -99,14 +94,17 @@ def view_save(request):
     uid = se.encrypt(request.POST['data'])
     model = se.ret_secret_model()
 
-    tmp = Form(SavePasswordForm())
+    formdata = Form(SavePasswordForm())
     try:
-        tmp = tmp.validate(request.POST.items())
+        formdata = formdata.validate(request.POST.items())
     except deform.ValidationFailure as e:
-        #invalid form; set everything default & carry on (no redos on this system)
-        model.Snippet = ''
-        model.ExpiryTime = 4
-        model.LifetimeReads = 2
+        #invalid form (no data to save was given)
+        url = request.route_url('home')
+        return HTTPFound(location=url)
+
+    model.ExpiryTime = datetime.datetime.now() + timedelta(hours=formdata['hours_until_expiration'])
+    model.LifetimeReads = formdata['maximum_views']
+    model.Snippet = formdata['snippet_type']
 
     DBSession.add(model)
     return {'uniqid':uid}
@@ -126,9 +124,20 @@ def view_retr(request):
     hasher.update('{}{}'.format(uniqid, uniqid))
     uniqhash = hasher.hexdigest()
 
-    result = session.query(Secret).filter_by(UniqHash=uniqhash).one()
+    try:
+        result = session.query(Secret).\
+            filter(Secret.UniqHash == uniqhash,\
+                   Secret.ExpiryTime >= datetime.datetime.now(),\
+                   Secret.LifetimeReads > 0).one()
+    except NoResultFound as e:
+        url = request.route_url('expired')
+        return HTTPFound(location=url)
+
     sd = SecretDecrypter()
     data = sd.decrypt_model(result, uniqid )
+    session.query(Secret).\
+        filter(Secret.UniqHash == uniqhash).\
+        update({"LifetimeReads":result.LifetimeReads - 1})
 
     return {
         'datatype':result.Snippet,
