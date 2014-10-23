@@ -5,10 +5,6 @@ from pyramid.view import view_config
 from sqlalchemy.exc import DBAPIError
 from sqlalchemy.orm.exc import NoResultFound
 
-import deform
-from deform import Form
-from deform import ValidationFailure
-
 from .models import (
     DBSession,
     Secret,
@@ -26,54 +22,17 @@ from .crypto import (
 from Crypto.Hash import SHA256
 
 #toHex = lambda x:"".join([hex(ord(c))[2:].zfill(2) for c in x])
+def is_intinrangeor(val, rmin, rmax, become):
+    if int(val) < rmin and int(val) > rmax:
+        return become
+    else:
+        return int(val)
 
-class SavePasswordForm(colander.MappingSchema):
-    mvchoices = (
-        ('', '- Number Total -'),
-        (1,'1'),(2,'2'),(3,'3'),(4,'4'),(5,'5')
-        )
-    maximum_views = colander.SchemaNode(
-        colander.Integer(),
-        validator=colander.Range(1, 5),
-        default=2,
-        missing=2,
-        widget=deform.widget.SelectWidget(values=mvchoices)
-    )
-    huechoices = (
-        ('', '- Hours/Days -'),
-        (1, '1h'),(2, '2h'),(4, '4h'),(8, '8h'),
-        (12, '12h'),(16, '16h'),(20, '20h'),(24, '1d'),
-        (36, '1d 12h'),(48, '2d'), (60, '2d 12h'),
-        (72, '3d'),(84, '3d 12h'),(96, '4d'),(108, '4d 12h'),
-        (120, '5d'),(144, '6d'),(168, '1w')
-        )
-    hours_until_expiration = colander.SchemaNode(
-        colander.Integer(),
-        validator=colander.Range(1, 168),
-        default=4,
-        missing=4,
-        widget=deform.widget.SelectWidget(values=huechoices)
-    )
-    dtchoices = (
-        ('', 'Password'),('as3', 'ActionScript3'),('shell', 'Bash/Shell'),
-        ('cf', 'ColdFusion'),('csharp', 'C#'),('cpp', 'C/C++'),
-        ('css', 'CSS'),('delphi', 'Delphi, Pascal'),('diff', 'Diff/Patch'),
-        ('erl', 'Erlang'),('groovy', 'Groovy'),('js', 'JavaScript'),
-        ('java', 'Java'),('jfx', 'JavaFX'),('pl', 'Perl'),
-        ('php', 'PHP'),('plain', 'Plain Text'),('ps', 'PowerShell'),
-        ('py', 'Python'),('ruby', 'Ruby'),('scala', 'Scala'),
-        ('sql', 'SQL'),('vb', 'Visual Basic'),('xml', 'XML,HTML,XML,XSLT'),
-        )
-    snippet_type = colander.SchemaNode(
-        colander.String(),
-        validator=colander.OneOf([(i[0]) for i in dtchoices]),
-        default='',
-        missing='',
-        widget=deform.widget.SelectWidget(values=dtchoices,css_class="datatype")
-    )
-    data = colander.SchemaNode(
-        colander.String()
-        )
+def is_valisinchoices(val, choices, become):
+    if val in choices:
+        return val
+    else:
+        return become
 
 @view_config(route_name='expired', renderer='templates/expired.pt')
 def view_err(request):
@@ -81,9 +40,7 @@ def view_err(request):
 
 @view_config(route_name='home', renderer='templates/home.pt')
 def view_home(request):
-    schema = SavePasswordForm()
-    pwform = Form(schema, action='/save', buttons=('submit',))
-    return {'pwform': pwform.render()}
+    return {}
 
 @view_config(route_name='save', renderer='templates/save.pt')
 def view_save(request):
@@ -94,17 +51,20 @@ def view_save(request):
     uid = se.encrypt(request.POST['data'])
     model = se.ret_secret_model()
 
-    formdata = Form(SavePasswordForm())
-    try:
-        formdata = formdata.validate(request.POST.items())
-    except deform.ValidationFailure as e:
-        #invalid form (no data to save was given)
-        url = request.route_url('home')
-        return HTTPFound(location=url)
+    choices = ('', 'as3','shell','cf','csharp','cpp','css','delphi','diff','erl',
+        'groovy','js','java','jfx','pl','php','plain','ps','py','ruby',
+        'scala','sql','vb','xml'
+        )
 
-    model.ExpiryTime = datetime.datetime.now() + timedelta(hours=formdata['hours_until_expiration'])
-    model.LifetimeReads = formdata['maximum_views']
-    model.Snippet = formdata['snippet_type']
+    hours_to_expire = is_intinrangeor(request.POST['maximum_views'], 1, 5, 2)
+    model.ExpiryTime = datetime.datetime.now() + timedelta(hours=hours_to_expire)
+
+    model.LifetimeReads = is_intinrangeor(request.POST['hours_until_expiration'], 1, 168, 4)
+    model.Snippet = is_valisinchoices(request.POST['snippet_type'], choices, 'plain')
+
+    if len(request.POST['data']) < 1:
+        #invalid form (no data to save was given)
+        return HTTPFound(location=request.route_url('home'))
 
     DBSession.add(model)
     return {'uniqid':uid}

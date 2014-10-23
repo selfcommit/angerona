@@ -4,11 +4,11 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="pyramid web application">
-    <meta name="author" content="Pylons Project">
+    <meta name="description" content="secure password &amp; snippet sharing utility">
+    <meta name="author" content="Stack Exchange, Inc">
     <link rel="shortcut icon" href="${request.static_url('angerona:static/pyramid-16x16.png')}">
 
-    <title>Alchemy Scaffold for The Pyramid Web Framework</title>
+    <title>Angerona</title>
 
     <!-- Bootstrap core CSS -->
     <link href="${request.static_url('angerona:static/bootstrap.min.css')}" rel="stylesheet">
@@ -22,15 +22,92 @@
       <script src="${request.static_url('angerona:static/respond.min.js')}"></script>
     <![endif]-->
   </head>
-
   <body>
-
     <div class="starter-template">
       <div class="container">
         <div class="row">
           <div class="col-md-10">
             <div class="content">
-              <div tal:content="structure pwform"></div>
+              <form method="POST" enctype="multipart/form-data" accept-charset="utf-8" class="" action="/save">
+                <fieldset>
+                  <ul>
+                    <li>
+                      <label for="Field1">Maximum Views </label>
+                      <select name="maximum_views" id="Field1">
+                        <option value="">- Number Total -</option>
+                        <option value="1">1</option>
+                        <option selected="selected" value="2">2</option>
+                        <option value="3">3</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                      </select>
+                    </li>
+                    <li>
+                      <label for="Field2">Hours Until Expiration </label>
+                      <select name="hours_until_expiration" id="Field2">
+                        <option value="">- Hours/Days -</option>
+                        <option value="1">1h</option>
+                        <option value="2">2h</option>
+                        <option selected="selected" value="4">4h</option>
+                        <option value="8">8h</option>
+                        <option value="12">12h</option>
+                        <option value="16">16h</option>
+                        <option value="20">20h</option>
+                        <option value="24">1d</option>
+                        <option value="36">1d 12h</option>
+                        <option value="48">2d</option>
+                        <option value="60">2d 12h</option>
+                        <option value="72">3d</option>
+                        <option value="84">3d 12h</option>
+                        <option value="96">4d</option>
+                        <option value="108">4d 12h</option>
+                        <option value="120">5d</option>
+                        <option value="144">6d</option>
+                        <option value="168">1w</option>
+                      </select>
+                    </li>
+                    <li>
+                      <label for="Field3">Snippet Type </label>
+                      <select name="snippet_type" id="Field3">
+                        <option selected="selected" value="">Password</option>
+                        <option value="as3">ActionScript3</option>
+                        <option value="shell">Bash/Shell</option>
+                        <option value="cf">ColdFusion</option>
+                        <option value="csharp">C#</option>
+                        <option value="cpp">C/C++</option>
+                        <option value="css">CSS</option>
+                        <option value="delphi">Delphi, Pascal</option>
+                        <option value="diff">Diff/Patch</option>
+                        <option value="erl">Erlang</option>
+                        <option value="groovy">Groovy</option>
+                        <option value="js">JavaScript</option>
+                        <option value="java">Java</option>
+                        <option value="jfx">JavaFX</option>
+                        <option value="pl">Perl</option>
+                        <option value="php">PHP</option>
+                        <option value="plain">Plain Text</option>
+                        <option value="ps">PowerShell</option>
+                        <option value="py">Python</option>
+                        <option value="ruby">Ruby</option>
+                        <option value="scala">Scala</option>
+                        <option value="sql">SQL</option>
+                        <option value="vb">Visual Basic</option>
+                        <option value="xml">XML,HTML,XML,XSLT</option>
+                      </select>
+                    </li>
+                    <li>
+                      <label for="Field4">Data</label>
+                      <input type="text" name="data" value="" id="in_data" />
+                    </li>
+                    <li>
+                      <button id="submit" name="submit" type="submit" class="btnText submit " value="submit">
+                      <span>Submit</span>
+                      </button>
+                    </li>
+                  </ul>
+                </fieldset>
+              </form>
+              <form id="hiddenform" style="display: none;"><textarea id="ta_data" name="data"></textarea></form>
             </div>
           </div>
         </div>
@@ -43,19 +120,48 @@
         </div>
         <div class="row">
           <div class="copyright">
-            Copyright &copy; Pylons Project
+            Copyright &copy; 2014 Stack Exchange
           </div>
         </div>
       </div>
     </div>
 
-
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
     <script src="${request.static_url('angerona:static/jquery.min.js')}"></script>
-    <script src="${request.static_url('angerona:static/scripts/deform.js')}"></script>
     <script src="${request.static_url('angerona:static/bootstrap.min.js')}"></script>
-    <script type="text/javascript">deform.load()</script>
+    <script type="text/javascript">
+      $(document).ready(function() {
+        var $input = $('#in_data');
+        var $textarea = $('#ta_data');
+
+        $('select[name=snippet_type]:first').change(function() {
+          if ($(this).val() == '') {
+            $input.val($textarea.val());
+            $textarea.val('');
+            swapElements($input[0], $textarea[0]);            
+          } else {
+            $textarea.val($input.val());
+            $input.val('');
+            swapElements($input[0], $textarea[0]);
+          }
+        });
+      });
+
+      /* from: http://stackoverflow.com/a/8034949 */
+      function swapElements(elm1, elm2) {
+        var parent1, next1,
+            parent2, next2;
+    
+        parent1 = elm1.parentNode;
+        next1   = elm1.nextSibling;
+        parent2 = elm2.parentNode;
+        next2   = elm2.nextSibling;
+    
+        parent1.insertBefore(elm2, next1);
+        parent2.insertBefore(elm1, next2);
+      }
+    </script>
   </body>
 </html>
