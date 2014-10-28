@@ -18,7 +18,7 @@ requires = [
     'zope.sqlalchemy',
     'waitress',
     'pycrypto',
-    'deform',
+    'IPy',
     ]
 
 setup(name='angerona',
