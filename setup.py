@@ -19,6 +19,7 @@ requires = [
     'waitress',
     'pycrypto',
     'IPy',
+    'colander'
     ]
 
 setup(name='angerona',
