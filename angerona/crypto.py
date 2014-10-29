@@ -4,8 +4,6 @@ from Crypto.Hash import SHA256
 from Crypto.Protocol.KDF import PBKDF2
 from Crypto.Cipher import AES
 
-import logging
-
 class SecretEncrypter:
     def __init__(self):
         self.CipherText = None
@@ -35,7 +33,7 @@ class SecretEncrypter:
             password=keyhash,
             salt=self.Salt,
             dkLen=32,
-            count=100000,
+            count=10000,
             )
 
         #derive our Iv from the UniqID (16 bytes)
@@ -47,11 +45,6 @@ class SecretEncrypter:
         ## s[:-ord(s[len(s)-1:])]
         BS = 16
         pad = lambda s: s + (BS - len(s) % BS) * chr(BS - len(s) % BS)
-
-        #log = logging.getLogger(__name__)
-        #log.debug(aesiv)
-        #toHex = lambda x:"".join([hex(ord(c))[2:].zfill(2) for c in x])
-        #raise RuntimeError(toHex(aesiv))
 
         #encrypt it w/ padding
         cipher = AES.new(aeskey, AES.MODE_CBC, aesiv)
@@ -89,7 +82,7 @@ class SecretDecrypter:
             password=keyhash,
             salt=in_model.Salt,
             dkLen=32,
-            count=100000,
+            count=10000,
             )
 
         #derive our Iv from the UniqID (16 bytes)
