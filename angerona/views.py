@@ -4,7 +4,12 @@ from pyramid.response import Response
 from pyramid.httpexceptions import HTTPFound
 from pyramid.view import view_config
 
-from sqlalchemy.exc import DBAPIError
+from sqlalchemy.exc import (
+    DBAPIError,
+    OperationalError,
+    DatabaseError
+    )
+
 from sqlalchemy.orm.exc import NoResultFound
 
 from .models import (
@@ -89,7 +94,7 @@ def view_save(request):
 
     try:
         DBSession.add(model)
-    except DatabaseError as e:
+    except (DatabaseError, OperationalError) as e:
         return HTTPFound(location=request.route_url('sorry'))
         
     return {
