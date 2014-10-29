@@ -19,12 +19,12 @@ requires = [
     'waitress',
     'pycrypto',
     'IPy',
-    'colander',
-    'pyodbc'
+    'pyodbc',
+    'PasteDeploy'
     ]
 
 setup(name='angerona',
-      version='0.0',
+      version='0.1',
       description='angerona',
       long_description=README + '\n\n' + CHANGES,
       classifiers=[

@@ -12,7 +12,6 @@ from .models import (
     Secret,
     )
 
-import colander
 import datetime
 from datetime import timedelta
 

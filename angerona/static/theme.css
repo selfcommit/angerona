@@ -90,6 +90,10 @@ p {
 }
 div.syntaxhighlighter {
   border-radius: 5px;
+  padding: 0.22em 0 0.22em 0;
+}
+div.angerona-tplt pre {
+  text-align: left !important;
 }
 @media (max-width: 1199px) {
   .angerona-tplt .content h1 {
