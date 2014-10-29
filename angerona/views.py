@@ -3,6 +3,7 @@ from __future__ import division
 from pyramid.response import Response
 from pyramid.httpexceptions import HTTPFound
 from pyramid.view import view_config
+from AppLogging import logger
 
 from sqlalchemy.exc import (
     DBAPIError,
@@ -92,9 +93,15 @@ def view_save(request):
 
     friendly_time = '{}d {}h'.format(hours_to_expire // 24, hours_to_expire % 24) 
 
+    session = DBSession()
+
     try:
-        DBSession.add(model)
-    except (DatabaseError, OperationalError) as e:
+        logger.debug("Attempting to save snippet")
+        session.add(model)
+        logger.debug("Attempting to flush to database")
+        session.flush()
+    except Exception, exc:
+        logger.debug(exc)
         return HTTPFound(location=request.route_url('sorry'))
         
     return {
