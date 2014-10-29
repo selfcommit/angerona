@@ -13,7 +13,7 @@ WORKDIR /opt/angerona
 RUN ["python", "setup.py", "install"]
 
 ADD docker/supervisor-system.conf /etc/supervisor/conf.d/system.conf
-ADD docker/supervisor-gunicorn.conf /etc/supervisor/conf.d/gunicorn.conf
+ADD docker/supervisor-angerona.conf /etc/supervisor/conf.d/angerona.conf
 
 CMD ["/usr/bin/supervisord"]
 EXPOSE 16543
