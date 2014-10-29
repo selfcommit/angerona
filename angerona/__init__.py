@@ -1,5 +1,6 @@
 from pyramid.config import Configurator
 from sqlalchemy import engine_from_config
+from AngeronaRequest import AngeronaRequest
 
 from .models import (
     DBSession,
@@ -23,5 +24,9 @@ def main(global_config, **settings):
     config.add_route('expired', '/expired')
     config.add_route('cron', '/cron')
     config.add_route('sorry', '/sorry')
+    #Log request id with the logger calls
+    config.set_request_factory(AngeronaRequest)
+    config.add_tween('cedar.ThreadTween.hack_thread_name_tween_factory')
+
     config.scan()
     return config.make_wsgi_app()
