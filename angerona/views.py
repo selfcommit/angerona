@@ -46,7 +46,7 @@ def view_err(request):
     return {}
 
 @view_config(route_name='sorry', renderer='templates/sorry.pt')
-def view_home(request):
+def view_sorry(request):
     return {}
 
 @view_config(route_name='home', renderer='templates/home.pt')
@@ -98,10 +98,12 @@ def view_save(request):
     try:
         logger.debug("Attempting to save snippet")
         session.add(model)
+
         logger.debug("Attempting to flush to database")
         session.flush()
-    except Exception, exc:
-        logger.debug(exc)
+
+    except DBAPIError, exc:
+        logger.error("DBAPIError: %s" % exc)
         return HTTPFound(location=request.route_url('sorry'))
         
     return {
