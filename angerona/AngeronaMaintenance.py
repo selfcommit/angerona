@@ -21,9 +21,7 @@ def CleanupDatabase(request):
                 filter((Secret.ExpiryTime < datetime.datetime.now()) | (Secret.LifetimeReads == 0)).\
                 delete()
             session.flush()
+            session.close()
         except (OperationalError, DBAPIError), exc:
             logger.error("CleanupDatabase(): DBAPIError %s" % exc)
             pass
-
-
-
