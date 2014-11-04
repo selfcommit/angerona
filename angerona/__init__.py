@@ -2,11 +2,17 @@ from pyramid.config import Configurator
 from sqlalchemy import engine_from_config
 from AngeronaRequest import AngeronaRequest
 import ThreadTween
+from pyramid.events import NewRequest
+from AngeronaMaintenance import CleanupDatabase
 
 from .models import (
     DBSession,
     Base,
     )
+
+def setup_post_request(event):
+    event.request.add_finished_callback(CleanupDatabase)
+
 
 
 def main(global_config, **settings):
@@ -26,6 +32,7 @@ def main(global_config, **settings):
     config.add_route('cron', '/cron')
     config.add_route('sorry', '/sorry')
     #Log request id with the logger calls
+    config.add_subscriber(setup_post_request, NewRequest)
     config.set_request_factory(AngeronaRequest)
     config.add_tween('angerona.ThreadTween.hack_thread_name_tween_factory')
 
