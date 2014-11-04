@@ -2,10 +2,7 @@ FROM dockerfile/python
 MAINTAINER Peter Grace, pete.grace@gmail.com
 
 RUN apt-get update
-RUN apt-get install -y supervisor unixodbc-dev tdsodbc freetds-dev freetds-bin freetds-common unixodbc  libgmp-dev
-
-ADD docker/odbcinst.ini /etc/odbcinst.ini
-ADD docker/odbc.ini /etc/odbc.ini
+RUN apt-get install -y supervisor unixodbc-dev tdsodbc freetds-dev freetds-bin freetds-common unixodbc libgmp-dev
 
 ADD . /opt/angerona
 
