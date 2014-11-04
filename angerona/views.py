@@ -137,9 +137,13 @@ def view_retr(request):
 
     sd = SecretDecrypter()
     data = sd.decrypt_model(result, uniqid )
-    session.query(Secret).\
-        filter(Secret.UniqHash == uniqhash).\
-        update({"LifetimeReads":result.LifetimeReads - 1})
+    try:
+        session.query(Secret).\
+            filter(Secret.UniqHash == uniqhash).\
+            update({"LifetimeReads":result.LifetimeReads - 1})
+    except Exception, e:
+        logger.error("Error updating LifetimeReads value for this snippet: %s" % e)
+        pass
 
     diff = result.ExpiryTime - datetime.datetime.now()
     diff = diff.total_seconds()
