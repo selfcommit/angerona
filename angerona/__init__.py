@@ -29,7 +29,6 @@ def main(global_config, **settings):
     config.add_route('retr', '/retr/{uniqid}')
     config.add_route('retrdel', '/retr/{uniqid}/delete')
     config.add_route('expired', '/expired')
-    config.add_route('cron', '/cron')
     config.add_route('sorry', '/sorry')
     #Log request id with the logger calls
     config.add_subscriber(setup_post_request, NewRequest)

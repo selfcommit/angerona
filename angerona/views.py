@@ -53,20 +53,6 @@ def view_sorry(request):
 def view_home(request):
     return {}
 
-@view_config(route_name='cron', renderer='templates/cron.pt')
-def view_cron(request):
-    from IPy import IP
-    ip = IP(request.client_addr)
-    if not ( ip in IP('127.0.0.0/8') or ip == IP('::1') ):
-        return {'msg':'localhost only'}
-
-    session = DBSession()
-    result = session.query(Secret).\
-        filter((Secret.ExpiryTime < datetime.datetime.now()) | (Secret.LifetimeReads == 0)).\
-        delete()
-    session.flush()
-    return {'msg':result}
-
 @view_config(route_name='save', renderer='templates/save.pt')
 def view_save(request):
     if not request.method == 'POST':
