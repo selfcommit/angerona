@@ -28,4 +28,20 @@ else:
             <button class="btn btn-default">Delete this data immediately.</button>
           </a>
         </div>
+    <script src="${request.static_url('angerona:static/shilgh/scripts/shCore.js')}"></script>
+    <script src="${request.static_url('angerona:static/shilgh/scripts/shAutoloader.js')}"></script>
+    <script type="text/javascript">
+	var sr = "${request.static_url('angerona:static/shilgh/scripts/shBrush')}";
+	SyntaxHighlighter.autoloader(
+	  ['as3',sr+'AS3.js'],['bash',sr+'Bash.js'],['cf',sr+'ColdFusion.js'],
+	  ['csharp',sr+'CSharp.js'],['cpp',sr+'Cpp.js'],['css',sr+'Css.js'],
+	  ['delphi',sr+'Delphi.js'],['diff',sr+'Diff.js'],['erl',sr+'Erlang.js'],
+	  ['groovy',sr+'Groovy.js'],['js',sr+'JScript.js'],['java',sr+'Java.js'],
+	  ['jfx',sr+'JavaFX.js'],['pl',sr+'Perl.js'],['php',sr+'Php.js'],
+	  ['plain',sr+'Plain.js'],['ps',sr+'PowerShell.js'],['py',sr+'Python.js'],
+	  ['ruby',sr+'Ruby.js'],['scala',sr+'Scala.js'],['sql',sr+'Sql.js'],
+	  ['vb',sr+'Vb.js'],['xml',sr+'Xml.js']
+	);
+        SyntaxHighlighter.all();
+        </script>
 </%block>

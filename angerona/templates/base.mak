@@ -12,6 +12,8 @@
 
     <link href="${request.static_url('angerona:static/bootstrap.min.css')}" rel="stylesheet">
     <link href="${request.static_url('angerona:static/theme.css')}" rel="stylesheet">
+    <link href="${request.static_url('angerona:static/shilgh/styles/shCore.css')}" rel="stylesheet">
+    <link href="${request.static_url('angerona:static/shilgh/styles/shThemeDefault.css')}" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
