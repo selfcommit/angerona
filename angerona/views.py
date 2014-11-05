@@ -41,24 +41,25 @@ def is_valisinchoices(val, choices, become):
     else:
         return become
 
-@view_config(route_name='expired', renderer='templates/expired.pt')
+@view_config(route_name='expired', renderer='angerona:templates/expired.mak')
 def view_err(request):
     return {}
 
-@view_config(route_name='sorry', renderer='templates/sorry.pt')
+@view_config(route_name='sorry', renderer='angerona:templates/sorry.mak')
 def view_sorry(request):
     return {}
 
-@view_config(route_name='home', renderer='templates/home.pt')
+@view_config(route_name='home', renderer='angerona:templates/home.mak')
 def view_home(request):
     return {}
 
-@view_config(route_name='save', renderer='templates/save.pt')
+@view_config(route_name='save', renderer='angerona:templates/save.mak')
 def view_save(request):
     if not request.method == 'POST':
         return Response('Method not allowed', content_type='text/plain', status_int=405)
 
     se = SecretEncrypter()
+    logger.debug(request.POST['data'])
     uid = se.encrypt(request.POST['data'])
     model = se.ret_secret_model()
 
@@ -98,7 +99,7 @@ def view_save(request):
         'friendly_time':friendly_time,
     }
 
-@view_config(route_name='retr', renderer='templates/retr.pt')
+@view_config(route_name='retr', renderer='angerona:templates/retr.mak')
 def view_retr(request):
     if request.method == 'POST':
         return Response('Method not allowed', content_type='text/plain', status_int=405)
@@ -143,7 +144,7 @@ def view_retr(request):
         'data':data,
     }
 
-@view_config(route_name='retrdel', renderer='templates/expired.pt')
+@view_config(route_name='retrdel', renderer='angerona:templates/expired.mak')
 def view_retrdel(request):
     session = DBSession()
     uniqid = request.matchdict['uniqid']
