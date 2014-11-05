@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="${request.locale_name}">
+<html>
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -8,10 +8,12 @@
     <meta name="author" content="Nextraztus">
     <link rel="shortcut icon" href="${request.static_url('angerona:static/favicon.png')}">
 
-    <title>Angerona - Save</title>
+    <title>Angerona</title>
 
     <link href="${request.static_url('angerona:static/bootstrap.min.css')}" rel="stylesheet">
     <link href="${request.static_url('angerona:static/theme.css')}" rel="stylesheet">
+    <link href="${request.static_url('angerona:static/shilgh/styles/shCore.css')}" rel="stylesheet">
+    <link href="${request.static_url('angerona:static/shilgh/styles/shThemeDefault.css')}" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -22,21 +24,7 @@
   <body>
     <div class="angerona-tplt">
       <div class="container">
-        <div class="row">
-          <div class="col-md-10">
-            <div class="content">
-              <h2><a href="${uniqurl}">${uniqurl}</a></h2>
-<?python
-if views_remain == 1:
-  plural=''
-else:
-  plural='s'
-?>
-              <p>This link is good for ${friendly_time} or ${views_remain} view${plural}, whichever comes first.</p>
-              <p><br/>Would you like to <a href="${request.route_url('home')}">share something again?<a/></p>
-            </div>
-          </div>
-        </div>
+	<%block name="BlockContent"/>
         <div class="row">
           <div class="links">
             <ul>
@@ -55,6 +43,5 @@ else:
 
     <script src="${request.static_url('angerona:static/jquery.min.js')}"></script>
     <script src="${request.static_url('angerona:static/bootstrap.min.js')}"></script>
-    <script type="text/javascript">deform.load()</script>
   </body>
 </html>
