@@ -28,8 +28,9 @@
         <div class="row">
           <div class="links">
             <ul>
-              <li><a href="#">Angerona Security Model</a></li>
-              <li><a href="#">Source Code &amp; Licensing</a></li>
+              <li><a href="${request.route_url('home')}">Share Something</a></li>
+              <li><a href="https://github.com/nextraztus/angerona/blob/master/README.md">Angerona Security Model</a></li>
+              <li><a href="https://github.com/nextraztus/angerona">Source Code &amp; Licensing</a></li>
             </ul>
           </div>
         </div>
