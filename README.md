@@ -1,6 +1,8 @@
 Angerona
 ========
 
+**Looking for a quick-start guide?  Try Angerona now using Docker!   [Click here](http://github.com/nextraztus/angerona/blob/master/Docker.md) for details.**
+
 Angerona in mythology was the deity which protected Rome by keeping the sacred name of the city from its enemies; aptly-named, this project is a keeper of secrets. Unlike its namesake, these secrets are only protected for a finite amount of time or shares, after which they evaporate into the nether that is the ones and zeros of the modern world.  
 
 Angerona is designed to allow the safe transfer of sensitive information over an insecure (but not real-time) attackable channel. This not the first project built to do this, but it is our spin on the idea. The main use-cases we find this useful for are also most obvious:
