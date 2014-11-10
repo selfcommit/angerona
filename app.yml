@@ -2,13 +2,9 @@ name: Angerona
 image: ubuntu-14-04-x64
 min_size: 1gb
 config:
-  #cloud-config
-  users:
-    - name: docker
-      groups: sudo
-      shell: /bin/bash
-      sudo: ['ALL=(ALL) NOPASSWD:ALL']
+  #first_run
   packages:
     - git
+    - docker.io
   runcmd:
-    - cd /home/docker && git clone git://github.com/selfcommit/angerona.git && cd angerona && python setup.py
+    - cd /home/docker && git clone git://github.com/selfcommit/angerona.git && cd angerona && bash setup.sh
