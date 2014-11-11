@@ -6,4 +6,4 @@ config:
     - git
     - docker.io
   runcmd:
-	- su -l root -c "docker run -d -p 443:443 petergrace/angerona"
+    - su -l root -c "docker run -d -p 443:443 petergrace/angerona"
