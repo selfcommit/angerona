@@ -1,6 +1,6 @@
 name: Angerona
 image: ubuntu-14-04-x64
-min_size: 512mb
+min_size: 1gb
 config:
   #first_run
   packages:
