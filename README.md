@@ -2,7 +2,7 @@ Angerona
 ========
 
 **Looking for a quick-start guide?  Try Angerona now using Docker!   [Click here](http://github.com/nextraztus/angerona/blob/master/Docker.md) for details.**
-[![Install on DigitalOcean](http://installer.71m.us/button.svg)](http://1button.less.fail/install?url=https://github.com/selfcommit/angerona.git)
+[![Install on DigitalOcean](http://installer.71m.us/button.svg)](http://installer.71m.us/install?url=https://github.com/selfcommit/angerona.git)
 
 Angerona in mythology was the deity which protected Rome by keeping the sacred name of the city from its enemies; aptly-named, this project is a keeper of secrets. Unlike its namesake, these secrets are only protected for a finite amount of time or shares, after which they evaporate into the nether that is the ones and zeros of the modern world.  
 
