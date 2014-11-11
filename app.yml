@@ -5,6 +5,3 @@ config:
   packages:
     - git
     - docker.io
-
-  runcmd:
-  	- docker run -d -p 443:443 petergrace/angerona
