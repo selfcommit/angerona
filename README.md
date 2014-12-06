@@ -14,6 +14,12 @@ Angerona is designed to allow the safe transfer of sensitive information over an
 
 We threw the syntax highlighter piece in for the potential it had to be a nice way to quickly ship sensitive code back and forth.
 
+Credits
+-------
+Angerona.pw takes its inspiration from [Password Pusher](www.pwpush.com) and adds a minor feature (syntax hilighting), many thanks them and projects like it.
+
+Special thanks to Peter Grace for making deployment via docker possible and his expertise with Python/Pyramid!
+
 Notes on Usage
 --------------
 Under no circumstances should both pieces of a credential (for example: username &amp; password) be sent in the same link or two links sent over the same channel. Real-time adversary would then have everything they needed. If, in the case of usernames and passwords, only the password was compromised but no other information, there's still plenty of other sleuthing and work that needs to be done.
