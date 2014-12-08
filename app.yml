@@ -1,0 +1,9 @@
+name: angerona
+image: ubuntu-14-04-x64
+config:
+  #first_run
+  packages:
+    - git
+    - docker.io
+  runcmd:
+    - su -l root -c "docker run -d -p 443:443 petergrace/angerona"
