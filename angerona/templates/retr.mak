@@ -33,7 +33,7 @@ else:
     <script type="text/javascript">
 	var sr = "${request.static_url('angerona:static/shilgh/scripts/shBrush')}";
 	SyntaxHighlighter.autoloader(
-	  ['as3',sr+'AS3.js'],['bash',sr+'Bash.js'],['cf',sr+'ColdFusion.js'],
+	  ['as3',sr+'AS3.js'],['shell',sr+'Bash.js'],['cf',sr+'ColdFusion.js'],
 	  ['csharp',sr+'CSharp.js'],['cpp',sr+'Cpp.js'],['css',sr+'Css.js'],
 	  ['delphi',sr+'Delphi.js'],['diff',sr+'Diff.js'],['erl',sr+'Erlang.js'],
 	  ['groovy',sr+'Groovy.js'],['js',sr+'JScript.js'],['java',sr+'Java.js'],
